@@ -1,3 +1,4 @@
+---
 - name: "Server configuration"
   hosts: "Linux_Servers"   tasks:     - name: "Configure hostname"
       hostname:
