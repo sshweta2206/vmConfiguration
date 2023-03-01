@@ -7,7 +7,6 @@ pipeline{
 	        dir("./hostnameSetup") {
 	        script {
 	              def hostname = params.HostName
-          sh " echo "$instanceIp" > /tmp/inventory.txt "
           sh 'ansible-playbook -i /tmp/inventory.txt hostnamesetup.yml -e "servername=${hostname}"'
 			    }
          }
