@@ -1,0 +1,5 @@
+- name: "Server configuration"
+  hosts: "Linux_Servers"   tasks:     - name: "Configure hostname"
+      hostname:
+        name: "{{ servername }}"
+      become: true
