@@ -1,6 +1,14 @@
 pipeline{
    agent any
   stages {
+  
+         stage('Checkout_Code') {
+            steps {
+                git branch: 'main',
+                credentialsId: 'gituser',
+                url: 'https://github.com/sshweta2206/vmConfiguration.git'
+            }
+        }
 		stage('Hostname setting') {
 		    when { expression { params.Configuration_Type == 'Hostname-setup' } }
 	       steps {
