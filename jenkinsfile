@@ -1,0 +1,56 @@
+pipeline{
+   agent any
+  stages {
+		stage('Hostname setting') {
+		    when { expression { params.Configuration_Type == 'Hostname-setup' } }
+	    steps {
+	        dir("./hostnameSetup") {
+	        script {
+	              def hostname = params.HostName
+          sh " echo "$instanceIp" > /tmp/inventory.txt "
+          sh 'ansible-playbook -i /tmp/inventory.txt hostnamesetup.yml -e "servername=${hostname}"'
+			    }
+         }
+       }
+		   stage('Syslog Setup') {
+             when { expression { params.Configuration_Type == 'Syslog-setup' } }
+	    steps {
+	        dir("./syslogsetup") {
+		     sh '''
+			    echo "Syslog Setup"
+          sh " echo "$instanceIp" > /tmp/inventory.txt "
+			    sh 'ansible-playbook -i /tmp/inventory.txt syslogsetup.yml'
+		      '''
+	        }
+	        }
+	    }
+   stage('Group and Users creation') {
+	        when { expression { params.Configuration_Type == 'Group-User-setup' } }
+	    steps {
+	           dir("./blue-green/user-group-creation") {
+	          script {
+	              def inp = params.Inputs
+	              //def iam_user = params.iam_user
+	              //def iam_group = params.iam_group
+	              def str = params.Inputs
+	              String[] variables=str.split(",");
+                  String iam_user=variables[0];
+                  String iam_group=variables[1];
+                  println iam_user
+                  println iam_group
+		       sh '''
+		       echo '''+iam_user+'''
+		        TF_VAR_iam_user='''+iam_user+'''
+		        TF_VAR_iam_group='''+iam_group+'''
+			    echo "Creating users and groups"
+			    terraform init -var=iam_user=$TF_VAR_iam_user -var=iam_group=$TF_VAR_iam_group
+			    terraform plan -var=iam_user=$TF_VAR_iam_user -var=iam_group=$TF_VAR_iam_group
+			    terraform apply -auto-approve -var=iam_user=$TF_VAR_iam_user -var=iam_group=$TF_VAR_iam_group
+			    '''
+	           }
+	           }
+            }
+	    }
+        
+	}
+}	
