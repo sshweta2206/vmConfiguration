@@ -14,11 +14,10 @@ pipeline{
 	       steps {
 	         dir("./hostnameSetup") {
 	         script {
-             sh '''
-	       def HostName = '''+host_name+'''
-	       echo $host_name
-               ansible-playbook -i /tmp/inventory.txt hostnamesetup.yml -e "servername=${host_name}"
-	       '''
+		     def inp = params.Inputs
+                     String[] variables=inp.split(",");
+                     String hostname=variables[0];
+		     println hostname
 			        }
                                      }
                 }
