@@ -1,0 +1,56 @@
+- hosts: Linux_Servers
+  become: yes
+  gather_facts: True
+  debugger: "on_failed"
+  
+  tasks:     
+  
+  - name: Gathering services state...
+      service_facts:
+    
+  - name: Run facts module to get latest information
+      setup:
+        filter:
+          - 'rsyslog'
+   
+  - name: If Rsyslog installed, print rsyslog current status. else - move to OS based installation.
+      debug:
+        var: ansible_facts.services["rsyslog.service"]
+        
+  - name: OS check
+      debug: msg="{{ ansible_distribution }}"
+      register: distro
+      
+  - name: The detected OS is CentOS. Installing rsyslog...
+      yum:
+        name: rsyslog
+      register: installedSuccess
+      when: ansible_facts['distribution'] == 'CentOS'     
+      
+  - name: The detected OS is Ubuntu. Installing rsyslog...
+      apt:
+        name: rsyslog
+      register: installedSuccess
+      when: ansible_facts['distribution'] == "Ubuntu"
+      
+  - name: Restart rsyslog
+      service:
+        name: rsyslog
+        state: started
+        enabled: True     
+        
+  - name: After success installation, replace config file.
+      blockinfile:
+        dest: /etc/rsyslog.conf
+        block: |
+          *.* @@172.31.44.181:514
+          *.* @@3.17.64.241:514
+      when: installedSuccess
+      notify: Restart rsyslog
+      
+   handlers:
+  - name: Restart rsyslog
+      service:
+        name: rsyslog
+        state: restarted
+        enabled: True
