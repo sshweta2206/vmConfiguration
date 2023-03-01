@@ -6,7 +6,6 @@ pipeline{
 	    steps {
 	        dir("./hostnameSetup") {
 	        script {
-		     def inp = params.Inputs
                      def str = params.Inputs
                      String[] variables=str.split(",");
                      String hostname=variables[0];
