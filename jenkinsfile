@@ -3,20 +3,20 @@ pipeline{
   stages {
 		stage('Hostname setting') {
 		    when { expression { params.Configuration_Type == 'Hostname-setup' } }
-	    steps {
-	        dir("./hostnameSetup") {
-	        script {
-		    def str = params.Inputs
-		    echo str
-                    string[] variables=str.split(",");
-                    String hostname=variables[0];
-                    def hostname = '''+hostname+'''
-          sh 'ansible-playbook -i /tmp/inventory.txt hostnamesetup.yml -e "servername=${hostname}"'
-			    }
-         }
-       }
-	   }
-		   stage('Syslog Setup') {
+	       steps {
+	         dir("./hostnameSetup") {
+	         script {
+		     def str = params.Inputs
+		     echo str
+             string[] variables=str.split(",");
+             String hostname=variables[0];
+             def hostname = '''+hostname+'''
+             sh 'ansible-playbook -i /tmp/inventory.txt hostnamesetup.yml -e "servername=${hostname}"'
+			        }
+                                     }
+                }
+	    }
+		stage('Syslog Setup') {
              when { expression { params.Configuration_Type == 'Syslog-setup' } }
 	    steps {
 	        dir("./syslogsetup") {
