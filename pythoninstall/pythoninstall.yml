@@ -1,0 +1,11 @@
+---
+- hosts: Linux_Servers
+  become: yes
+  pre_tasks:
+     - raw: sudo yum install -y python3
+       register: py_minimal_output
+  tasks:     - debug:
+        var=py_minimal_output.stdout_lines     - name: get Python version
+      shell: python --version 2>&1
+      register: py_output     - debug:
+        var=py_output.stdout_lines
