@@ -14,11 +14,16 @@ pipeline{
 	       steps {
 	         dir("./hostnameSetup") {
 	         script {
-		     def inp = params.Inputs
-                     String hostname=variables[0];
-		     println hostname
-			        }
-                                     }
+		     def type = params.Configuration_Type
+                     def inp = params.Inputs
+                     println inp
+                     sh '''
+	                 HostName='''+inp+'''
+	                 echo ${HostName}
+		         ansible-playbook -i /tmp/inventory.txt hostnamesetup.yml -e "servername=${HostName}"
+		     '''
+		    }
+                   }
                 }
 	    }
 		stage('Syslog Setup') {
