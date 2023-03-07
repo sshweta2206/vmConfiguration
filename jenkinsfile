@@ -20,7 +20,8 @@ pipeline{
                      sh '''
 	                 HostName='''+inp+'''
 	                 echo ${HostName}
-		         ansible-playbook -i /tmp/inventory.txt hostnamesetup.yml -e "servername=${HostName}"
+			 sh " echo "$instanceIp" > /tmp/inventory.txt "
+		         ansible-playbook -i /tmp/inventory.txt hostname_config.yml -e "servername=${HostName}"
 		     '''
 		    }
                    }
@@ -32,8 +33,8 @@ pipeline{
 	        dir("./syslogsetup") {
 		     sh '''
 			    echo "Syslog Setup"
-          sh " echo "$instanceIp" > /tmp/inventory.txt "
-			    sh 'ansible-playbook -i /tmp/inventory.txt syslogsetup.yml'
+                            sh " echo "$instanceIp" > /tmp/inventory.txt "
+			    sh 'ansible-playbook -i /tmp/inventory.txt rsyslog.yml'
 		      '''
 	        }
 	        }
