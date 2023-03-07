@@ -1,6 +1,6 @@
 ---
 
-- hosts: Linux_Servers
+- hosts: all
   become: yes
   gather_facts: False
   collections:
