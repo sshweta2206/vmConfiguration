@@ -1,0 +1,61 @@
+pipeline{
+   agent any
+   stages {
+		stage('Hostname setting') {
+		    when { expression { params.Configuration_Type == 'Hostname-setup' } }
+	    steps {
+	        dir("./blue-green/hostnamesetup") {
+	        script {
+	              def hostname = params.HostName
+		          sh '''
+			        echo "Hostname"
+			        echo $hostname
+			        sh hostname.sh
+			      '''
+            }
+		    }    
+	    }
+	    }
+	    stage('Group and Users creation') {
+	        when { expression { params.Configuration_Type == 'Group-User-setup' } }
+	    steps {
+	           dir("./blue-green/user-group-creation") {
+	          script {
+	              def inp = params.Inputs
+	              //def iam_user = params.iam_user
+	              //def iam_group = params.iam_group
+	              def str = params.Inputs
+	              String[] variables=str.split(",");
+                  String iam_user=variables[0];
+                  String iam_group=variables[1];
+                  println iam_user
+                  println iam_group
+		       sh '''
+		       echo '''+iam_user+'''
+		        TF_VAR_iam_user='''+iam_user+'''
+		        TF_VAR_iam_group='''+iam_group+'''
+			    echo "Creating users and groups"
+			    terraform init -var=iam_user=$TF_VAR_iam_user -var=iam_group=$TF_VAR_iam_group
+			    terraform plan -var=iam_user=$TF_VAR_iam_user -var=iam_group=$TF_VAR_iam_group
+			    terraform apply -auto-approve -var=iam_user=$TF_VAR_iam_user -var=iam_group=$TF_VAR_iam_group
+			    '''
+	           }
+	           }
+            }
+	    }
+        stage('Syslog Setup') {
+             when { expression { params.Configuration_Type == 'Syslog-setup' } }
+	    steps {
+	        dir("./blue-green/syslogsetup") {
+		     sh '''
+			    echo "Syslog Setup"
+			    scp -o StrictHostKeyChecking=no syslog.sh ec2-user@${instanceIp}:
+			    ssh -o StrictHostKeyChecking=no ec2-user@${instanceIp} "chmod 777 syslog.sh"
+			    ssh -o StrictHostKeyChecking=no ec2-user@${instanceIp} "sh syslog.sh" 
+			    '''
+	        }
+	        }
+	    }
+        
+	}
+}	

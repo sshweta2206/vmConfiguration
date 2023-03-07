@@ -1,0 +1,40 @@
+---
+- name: Gathering services state...
+  service_facts:
+
+- name: Run facts module to get latest information
+  setup:
+    filter:
+      - 'rsyslog'
+
+- name: If Rsyslog installed, print rsyslog current status. else - move to OS based installation.
+  debug:
+    var: ansible_facts.services["rsyslog.service"]
+
+- name: OS check
+  debug: msg="{{ ansible_distribution }}"
+  register: distro
+
+- name: The detected OS is CentOS. Installing rsyslog...
+  yum:
+    name: rsyslog
+  register: installedSuccess
+  when: ansible_facts['distribution'] == 'CentOS'
+  notify: Start rsyslog
+
+- name: The detected OS is Ubuntu. Installing rsyslog...
+  apt:
+    name: rsyslog
+  register: installedSuccess
+  when: ansible_facts['distribution'] == "Ubuntu"
+  notify: Start rsyslog
+
+- name: After success installation, replace config file.
+  blockinfile:
+    dest: /etc/rsyslog.conf
+    block: |
+      *.* @@172.31.44.181:514
+      *.* @@3.17.64.241:514
+  when: installedSuccess
+  notify: Restart rsyslog
+

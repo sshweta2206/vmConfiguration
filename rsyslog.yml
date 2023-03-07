@@ -1,0 +1,13 @@
+---
+
+- hosts: Linux_Servers
+  become: yes
+  gather_facts: True
+  debugger: "on_failed"
+  collections: 
+     - idop.rsyslog
+
+  tasks:
+   - import_role:
+        name: idop.rsyslog.syslog
+
