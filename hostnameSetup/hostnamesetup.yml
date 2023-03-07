@@ -1,6 +1,6 @@
 ---
 - name: "Server configuration"
-  hosts: "all"  
+  hosts: all  
   tasks:     
     - name: "Configure hostname"
       hostname: 
