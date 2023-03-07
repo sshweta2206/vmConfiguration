@@ -19,10 +19,9 @@ pipeline{
                      println inp
                      sh '''
 	                 HostName='''+inp+'''
-			 host=cat HostName | cut -d, -f1 
-	                 echo ${HostName}
-			 sh " echo "$instanceIp" > /tmp/inventory.txt "
-		         ansible-playbook -i /tmp/inventory.txt hostname_config.yml -e "servername=${HostName}"
+	                 host=`echo $HostName | cut -d, -f1`
+	                 echo ${host}
+		         ansible-playbook -i /tmp/inventory.txt hostname_config.yml -e "servername=${host}"
 		     '''
 		    }
                    //}
