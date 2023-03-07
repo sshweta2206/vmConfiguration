@@ -12,7 +12,7 @@ pipeline{
 		stage('Hostname setting') {
 		    when { expression { params.Configuration_Type == 'Hostname-setup' } }
 	       steps {
-	         dir("./hostnameSetup") {
+	         //dir("./hostnameSetup") {
 	         script {
 		     def type = params.Configuration_Type
                      def inp = params.Inputs
@@ -24,7 +24,7 @@ pipeline{
 		         ansible-playbook -i /tmp/inventory.txt hostname_config.yml -e "servername=${HostName}"
 		     '''
 		    }
-                   }
+                   //}
                 }
 	    }
 		stage('Syslog Setup') {
