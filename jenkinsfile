@@ -30,14 +30,15 @@ pipeline{
 		stage('Syslog Setup') {
              when { expression { params.Configuration_Type == 'Syslog-setup' } }
 	    steps {
-	        dir("./syslogsetup") {
+	        //dir("./syslogsetup") {
+		script {
 		     sh '''
 			    echo "Syslog Setup"
-                            sh " echo "$instanceIp" > /tmp/inventory.txt "
-			    sh 'ansible-playbook -i /tmp/inventory.txt rsyslog.yml'
+			    ansible-playbook -i /tmp/inventory.txt rsyslog.yml
 		      '''
 	        }
-	        }
+	        //}
+		}
 	    }
    stage('Group and Users creation') {
 	        when { expression { params.Configuration_Type == 'Group-User-setup' } }
