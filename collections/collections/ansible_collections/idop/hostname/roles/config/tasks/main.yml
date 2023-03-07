@@ -1,0 +1,6 @@
+---
+    - name: "Configure hostname"
+      hostname:
+        name: "{{ servername }}"
+
+# tasks file for config

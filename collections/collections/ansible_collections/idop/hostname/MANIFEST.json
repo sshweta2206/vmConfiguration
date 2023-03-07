@@ -1,0 +1,30 @@
+{
+ "collection_info": {
+  "description": "your collection description", 
+  "repository": "http://example.com/repository", 
+  "tags": [], 
+  "dependencies": {}, 
+  "authors": [
+   "your name <example@domain.com>"
+  ], 
+  "issues": "http://example.com/issue/tracker", 
+  "name": "hostname", 
+  "license": [
+   "GPL-2.0-or-later"
+  ], 
+  "documentation": "http://docs.example.com", 
+  "namespace": "idop", 
+  "version": "1.0.0", 
+  "readme": "README.md", 
+  "license_file": null, 
+  "homepage": "http://example.com"
+ }, 
+ "file_manifest_file": {
+  "format": 1, 
+  "ftype": "file", 
+  "chksum_sha256": "a893af6b67fe88661ff431d55fe79886a838b260576e54bb6a45cfb43aa4a76c", 
+  "name": "FILES.json", 
+  "chksum_type": "sha256"
+ }, 
+ "format": 1
+}
